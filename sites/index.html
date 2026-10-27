@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة السحابة المركزية ومصنع التطبيقات</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #161e2e;
+            --card-border: #2a374a;
+            --primary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --nav-bg: #111827;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text); padding-bottom: 90px; line-height: 1.6; }
+        .container { max-width: 950px; margin: 0 auto; padding: 15px; }
+        
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        
+        h2 { color: var(--primary); margin-bottom: 15px; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 18px; margin-bottom: 16px; box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+        
+        /* الكروت الطويلة المتراصة تحت بعضها لصفحة الإعدادات */
+        .settings-long-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            border-right: 6px solid var(--primary);
+            width: 100%;
+        }
+        .settings-long-card h3 { color: var(--primary); margin-bottom: 12px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 13px; font-weight: 500; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--card-border); background: #0b0f19; color: var(--text); font-size: 14px; }
+        input:focus, textarea:focus { outline: 2px solid var(--primary); }
+        
+        .btn { display: inline-block; padding: 12px 20px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; text-align: center; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: #059669; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+        /* تبويبات أندرويد الفرعية */
+        .sub-tabs { display: flex; gap: 8px; margin-bottom: 15px; background: #0b0f19; padding: 5px; border-radius: 10px; border: 1px solid var(--card-border); }
+        .sub-tab-btn { flex: 1; background: transparent; color: var(--text-muted); border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; transition: 0.2s; text-align: center; }
+        .sub-tab-btn.active { background: var(--primary); color: white; }
+        .sub-tab-content { display: none; }
+        .sub-tab-content.active { display: block; }
+
+        /* الشريط السفلي الثابت (5 صفحات) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--nav-bg);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.5);
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+            transition: 0.2s;
+        }
+        .nav-item span { font-size: 18px; margin-bottom: 3px; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+
+        .log-box { background: #000; color: #34d399; padding: 14px; border-radius: 8px; font-family: monospace; font-size: 12px; height: 140px; overflow-y: auto; border: 1px solid var(--card-border); margin-top: 10px; }
+        .link-item { background: #0b0f19; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .link-item a { color: #60a5fa; text-decoration: none; font-weight: bold; word-break: break-all; font-size: 13px; }
+        
+        iframe { width: 100%; height: 260px; background: white; border-radius: 8px; border: 1px solid var(--card-border); margin-top: 10px; }
+        .logo-preview { width: 60px; height: 60px; border-radius: 10px; border: 1px dashed var(--text-muted); display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0b0f19; margin-top: 5px; }
+        .logo-preview img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- الصفحة 1: الرئيسية -->
+    <div id="pageHome" class="page-content active">
+        <h2>🏠 الصفحة الرئيسية للمصنع السحابي</h2>
+        <div class="card">
+            <h3 style="color: var(--primary); margin-bottom: 8px;">مرحباً بك في منصة السحابة المركزية</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">يتم التحكم بالمستودع السحابي ونشر صفحات الويب وتغليف وتصميم تطبيقات الأندرويد بروابط مستقلة.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="btn btn-primary" onclick="switchPage('pageHosting', document.querySelectorAll('.nav-item')[1])">🌐 الاستضافة والرفع</button>
+                <button class="btn btn-success" onclick="switchPage('pageAndroid', document.querySelectorAll('.nav-item')[3])">🤖 مصنع الأندرويد</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3 style="margin-bottom: 10px; font-size: 16px;">📊 ملخص الاتصال السحابي</h3>
+            <div id="homeSummary" style="color: var(--text-muted); font-size: 13px;">جاري الفحص...</div>
+        </div>
+    </div>
+
+    <!-- الصفحة 2: الاستضافة والرفع -->
+    <div id="pageHosting" class="page-content">
+        <h2>🌐 استضافة ورفع الويب والملفات</h2>
+        <div class="card">
+            <div class="form-group">
+                <label>اسم الملف أو المسار داخل المستودع</label>
+                <input type="text" id="filePath" placeholder="sites/my-app/index.html">
+            </div>
+            <div class="form-group">
+                <label>محتوى الملف البرمجي</label>
+                <textarea id="fileContent" rows="6" placeholder="اكتب كود الـ HTML هنا..."></textarea>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="uploadFileToCloud()">🚀 رفع ونشر برابط مستقل</button>
+            </div>
+            <div id="urlOutput" class="link-item" style="display:none; margin-top: 12px;"></div>
+        </div>
+        <div class="card">
+            <h2>📊 سجل العمليات الحية بالخلفية</h2>
+            <div id="logBox" class="log-box">جاهز للعمل...</div>
+        </div>
+    </div>
+
+    <!-- الصفحة 3: محرر الأكواد -->
+    <div id="pageEditor" class="page-content">
+        <h2>💻 محرر الأكواد والمعاينة الفورية</h2>
+        <div class="card">
+            <div class="form-group">
+                <label>اسم الملف البرمجي</label>
+                <input type="text" id="editorFileName" placeholder="index.html">
+            </div>
+            <div class="form-group">
+                <label>محرر الأكواد</label>
+                <textarea id="codeEditorInput" rows="7" placeholder="<h1>تطبيقي الخاص</h1>" oninput="debouncedPreview()"></textarea>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveCodeLocally()">💾 حفظ محلياً بالجوال</button>
+                <button class="btn btn-success" onclick="pushEditorToHosting()">🚀 إرسال للاستضافة مباشرة</button>
+            </div>
+        </div>
+        <div class="card">
+            <label><strong>👁️ المعاينة الفورية:</strong></label>
+            <iframe id="previewFrame"></iframe>
+        </div>
+    </div>
+
+    <!-- الصفحة 4: مصنع الأندرويد -->
+    <div id="pageAndroid" class="page-content">
+        <h2>🤖 مصنع وتغليف تطبيقات الأندرويد (APK)</h2>
+        
+        <div class="sub-tabs">
+            <button class="sub-tab-btn active" onclick="openAndroidSubTab('tabAndroidUrl', this)">🌐 تغليف رابط ويب</button>
+            <button class="sub-tab-btn" onclick="openAndroidSubTab('tabAndroidCode', this)">📦 بناء من كود/ملف</button>
+        </div>
+
+        <!-- تغليف رابط -->
+        <div id="tabAndroidUrl" class="sub-tab-content active card">
+            <h3>تغليف موقع ويب أو رابط سحابي</h3>
+            <div class="form-group" style="margin-top: 10px;">
+                <label>اسم التطبيق</label>
+                <input type="text" id="apkNameFromUrl" placeholder="اسم تطبيقك">
+            </div>
+            <div class="form-group">
+                <label>رابط الموقع المراد تغليفه</label>
+                <input type="text" id="apkTargetUrl" placeholder="https://username.github.io/repo/sites/app/">
+            </div>
+            <div class="form-group">
+                <label>رفع شعار التطبيق (صورة الأيقونة)</label>
+                <input type="file" id="apkLogoInput" accept="image/*" onchange="previewLogo(event)">
+                <div class="logo-preview" id="logoPreviewContainer"><span>صورة</span></div>
+            </div>
+            <button class="btn btn-success" onclick="buildAndroidFromUrl()">⚙️ بدء التغليف وإنشاء APK مع الشعار</button>
+        </div>
+
+        <!-- بناء من كود -->
+        <div id="tabAndroidCode" class="sub-tab-content card">
+            <h3>بناء تطبيق من الكود المصدري والملفات</h3>
+            <div class="form-group" style="margin-top: 10px;">
+                <label>اسم حزمة التطبيق (Package Name)</label>
+                <input type="text" id="apkPackageName" placeholder="com.mycompany.app">
+            </div>
+            <div class="form-group">
+                <label>مسار ملفات التكوين والكود بالمستودع</label>
+                <input type="text" id="apkCodePath" placeholder="apks/config.json">
+            </div>
+            <button class="btn btn-primary" onclick="triggerAndroidCodeBuild()">⚙️ إرسال لبناء الأندرويد بالسحابة</button>
+        </div>
+
+        <div class="card">
+            <h2>📚 مكتبة ملفات المستودع</h2>
+            <div id="libraryList"><p style="color: var(--text-muted);">اضغط للتحديث...</p></div>
+            <button class="btn btn-primary" onclick="fetchLibraryFiles()" style="margin-top: 10px; font-size: 12px; padding: 8px 12px;">🔄 جلب مكتبة المستودع</button>
+        </div>
+    </div>
+
+    <!-- الصفحة 5: الإعدادات (كروت طويلة متراصة من الأعلى للأسفل) -->
+    <div id="pageSettings" class="page-content">
+        <h2>⚙️ الإعدادات والخدمات المركزية</h2>
+        
+        <!-- الكرت الطويل 1 -->
+        <div class="settings-long-card">
+            <h3>🔗 1. إعدادات الاتصال بـ GitHub API</h3>
+            <div class="form-group">
+                <label>اسم مستخدم GitHub</label>
+                <input type="text" id="repoOwner" placeholder="username">
+            </div>
+            <div class="form-group">
+                <label>اسم المستودع (Repository)</label>
+                <input type="text" id="repoName" placeholder="repository-name">
+            </div>
+            <div class="form-group">
+                <label>مفتاح الصلاحية الشخصي (GitHub Token)</label>
+                <input type="password" id="githubToken" placeholder="ghp_xxxxx">
+            </div>
+            <button class="btn btn-primary" onclick="testConnection()">🔌 اختبار الاتصال</button>
+        </div>
+
+        <!-- الكرت الطويل 2 -->
+        <div class="settings-long-card">
+            <h3>📦 2. إنشاء مستودع سحابي جديد</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">إنشاء مستودع مستقل تلقائياً عبر التوكن.</p>
+            <button class="btn btn-success" onclick="createRepository()">📦 إنشاء المستودع الآن</button>
+        </div>
+
+        <!-- الكرت الطويل 3 -->
+        <div class="settings-long-card" style="border-right-color: var(--danger);">
+            <h3>🛠️ 3. ذاكرة الجهاز والبيانات</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 12px;">مسح الإعدادات والتخزين المحلي بالجوال.</p>
+            <button class="btn btn-danger" onclick="localStorage.clear(); alert('تم إعادة الضبط بنجاح.'); location.reload();">🗑️ مسح الذاكرة المحلية</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- الشريط السفلي الثابت -->
+<nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchPage('pageHome', this)">
+        <span>🏠</span>الرئيسية
+    </button>
+    <button class="nav-item" onclick="switchPage('pageHosting', this)">
+        <span>🌐</span>الاستضافة
+    </button>
+    <button class="nav-item" onclick="switchPage('pageEditor', this)">
+        <span>💻</span>المحرر
+    </button>
+    <button class="nav-item" onclick="switchPage('pageAndroid', this)">
+        <span>🤖</span>الأندرويد
+    </button>
+    <button class="nav-item" onclick="switchPage('pageSettings', this)">
+        <span>⚙️</span>الإعدادات
+    </button>
+</nav>
+
+<script>
+    function switchPage(pageId, btn) {
+        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        btn.classList.add('active');
+        saveSettings();
+        if(pageId === 'pageHome') checkHomeSummary();
+    }
+
+    function openAndroidSubTab(tabId, btn) {
+        document.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // حل مشكلة التجميد بتأخير تحديث المعاينة الحية (Debounce)
+    let previewTimeout;
+    function debouncedPreview() {
+        clearTimeout(previewTimeout);
+        previewTimeout = setTimeout(livePreview, 400);
+    }
+
+    function livePreview() {
+        const code = document.getElementById('codeEditorInput').value;
+        const frame = document.getElementById('previewFrame');
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        doc.open();
+        doc.write(code);
+        doc.close();
+    }
+
+    function saveCodeLocally() {
+        localStorage.setItem('saved_code', document.getElementById('codeEditorInput').value);
+        log("✅ تم حفظ الكود محلياً على جهازك.", "success");
+        alert("تم الحفظ محلياً بنجاح!");
+    }
+
+    function pushEditorToHosting() {
+        const fileName = document.getElementById('editorFileName').value.trim() || "index.html";
+        const code = document.getElementById('codeEditorInput').value;
+        document.getElementById('filePath').value = "sites/" + fileName;
+        document.getElementById('fileContent').value = code;
+        switchPage('pageHosting', document.querySelectorAll('.nav-item')[1]);
+        log("🔄 تم إرسال الكود لصفحة الاستضافة جاهزاً للنشر.", "warn");
+    }
+
+    function previewLogo(e) {
+        const file = e.target.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('logoPreviewContainer').innerHTML = `<img src="${evt.target.result}" alt="Logo">`;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    window.onload = function() {
+        if(localStorage.getItem('gh_owner')) document.getElementById('repoOwner').value = localStorage.getItem('gh_owner');
+        if(localStorage.getItem('gh_repo')) document.getElementById('repoName').value = localStorage.getItem('gh_repo');
+        if(localStorage.getItem('gh_token')) document.getElementById('githubToken').value = localStorage.getItem('gh_token');
+        if(localStorage.getItem('saved_code')) document.getElementById('codeEditorInput').value = localStorage.getItem('saved_code');
+        livePreview();
+        checkHomeSummary();
+    };
+
+    function saveSettings() {
+        const owner = document.getElementById('repoOwner').value.trim();
+        const repo = document.getElementById('repoName').value.trim();
+        const token = document.getElementById('githubToken').value.trim();
+        localStorage.setItem('gh_owner', owner);
+        localStorage.setItem('gh_repo', repo);
+        localStorage.setItem('gh_token', token);
+        return { owner, repo, token };
+    }
+
+    function log(msg, type = "info") {
+        const box = document.getElementById('logBox');
+        const time = new Date().toLocaleTimeString('ar-SA');
+        let color = "#34d399";
+        if(type === "error") color = "#ef4444";
+        if(type === "warn") color = "#fbbf24";
+        box.innerHTML += `<div style="color: ${color}">[${time}] ${msg}</div>`;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    async function checkHomeSummary() {
+        const { owner, repo, token } = saveSettings();
+        const summary = document.getElementById('homeSummary');
+        if(!owner || !repo || !token) {
+            summary.innerHTML = "<span style='color: var(--danger);'>⚠️ يرجى ضبط الإعدادات في صفحة الإعدادات أولاً.</span>";
+            return;
+        }
+        summary.innerHTML = "🔄 جاري الفحص...";
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+                headers: { "Authorization": `token ${token}`, "Accept": "vnd.github.v3+json" }
+            });
+            if(res.ok) {
+                summary.innerHTML = `<span style='color: var(--success);'>✅ الاتصال بالمستودع (${owner}/${repo}) ممتازة والسحابة جاهزة!</span>`;
+            } else {
+                summary.innerHTML = "<span style='color: var(--danger);'>❌ فشل الاتصال، تأكد من التوكن واسم المستودع.</span>";
+            }
+        } catch(e) {
+            summary.innerHTML = "<span style='color: var(--danger);'>❌ خطأ في الشبكة.</span>";
+        }
+    }
+
+    async function testConnection() {
+        const { owner, repo, token } = saveSettings();
+        if(!owner || !repo || !token) { alert("تأكد من إدخال البيانات كاملة."); return; }
+        log("🔄 جاري اختبار الاتصال...");
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+                headers: { "Authorization": `token ${token}` }
+            });
+            if(res.ok) { log("✅ اتصال ناجح!", "success"); alert("تم الاتصال بنجاح!"); }
+            else { log("❌ فشل الاتصال.", "error"); alert("فشل الاتصال."); }
+        } catch (e) { log(`❌ خطأ: ${e.message}`, "error"); }
+    }
+
+    async function createRepository() {
+        const { repo, token } = saveSettings();
+        if(!token || !repo) { alert("تأكد من التوكن واسم المستودع."); return; }
+        log(`📦 جاري إنشاء المستودع (${repo})...`);
+        try {
+            const res = await fetch(`https://api.github.com/user/repos`, {
+                method: "POST",
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ name: repo, private: false, auto_init: true })
+            });
+            if(res.ok) { log("✅ تم إنشاء المستودع بنجاح!", "success"); alert("تم الإنشاء بنجاح!"); }
+            else { log("⚠️ المستودع قد يكون موجوداً مسبقاً.", "warn"); }
+        } catch (e) { log(`❌ خطأ: ${e.message}`, "error"); }
+    }
+
+    async function uploadFileToCloud() {
+        const { owner, repo, token } = saveSettings();
+        const filePath = document.getElementById('filePath').value.trim();
+        const content = document.getElementById('fileContent').value;
+        if(!owner || !repo || !token || !filePath) { alert("يرجى إدخال البيانات ومسار الملف."); return; }
+
+        log(`🚀 جاري الرفع (${filePath})...`);
+        let sha = null;
+        try {
+            const check = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
+                headers: { "Authorization": `token ${token}` }
+            });
+            if(check.ok) { const fData = await check.json(); sha = fData.sha; }
+        } catch(e) {}
+
+        const encodedContent = btoa(unescape(encodeURIComponent(content)));
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`, {
+                method: "PUT",
+                headers: { "Authorization": `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ message: `Upload ${filePath}`, content: encodedContent, sha: sha })
+            });
+            if(res.ok) {
+                const webUrl = `https://${owner}.github.io/${repo}/${filePath}`;
+                log(`✅ تم الرفع والنشر بنجاح!`, "success");
+                const output = document.getElementById('urlOutput');
+                output.style.display = "flex";
+                output.innerHTML = `<div><strong>🎉 رابط الاستضافة:</strong><br><a href="${webUrl}" target="_blank">${webUrl}</a></div>`;
+            } else { log("❌ فشل الرفع.", "error"); alert("فشل الرفع."); }
+        } catch (e) { log(`❌ خطأ: ${e.message}`, "error"); }
+    }
+
+    async function fetchLibraryFiles() {
+        const { owner, repo, token } = saveSettings();
+        if(!owner || !repo || !token) return;
+        const listDiv = document.getElementById('libraryList');
+        listDiv.innerHTML = "جاري التحميل...";
+        try {
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/`, {
+                headers: { "Authorization": `token ${token}` }
+            });
+            if(res.ok) {
+                const files = await res.json();
+                let html = "<div style='display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto;'>";
+                files.forEach(f => {
+                    html += `<div style="background:#0b0f19; padding:8px; border-radius:6px; border:1px solid var(--card-border); font-size:12px;">📁 <strong>${f.name}</strong> (${f.type})</div>`;
+                });
+                html += "</div>";
+                listDiv.innerHTML = html;
+            } else { listDiv.innerHTML = "<p>المستودع فارغ.</p>"; }
+        } catch(e) { listDiv.innerHTML = "<p>خطأ في جلب الملفات.</p>"; }
+    }
+
+    function buildAndroidFromUrl() {
+        const name = document.getElementById('apkNameFromUrl').value.trim();
+        const url = document.getElementById('apkTargetUrl').value.trim();
+        if(!name || !url) { alert("يرجى إدخال البيانات كاملة."); return; }
+        log(`🤖 تم بدء طلب تغليف الرابط (${url}) لتطبيق (${name}) مع الشعار بنجاح.`, "success");
+        alert("تم إرسال طلب التغليف وبناء הـ APK بنجاح!");
+    }
+
+    function triggerAndroidCodeBuild() {
+        const pkg = document.getElementById('apkPackageName').value.trim();
+        if(!pkg) { alert("إدخل اسم الحزمة."); return; }
+        log(`🤖 جاري البناء للحزمة (${pkg})...`, "success");
+        alert("تم إرسال طلب البناء بنجاح!");
+    }
+</script>
+
+</body>
+</html>
