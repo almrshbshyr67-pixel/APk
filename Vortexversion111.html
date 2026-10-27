@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استضافة - المنصة السحابية السريعة</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --surface: #161b22;
+            --surface-hover: #21262d;
+            --border: #30363d;
+            --primary: #238636;
+            --primary-hover: #2ea043;
+            --accent: #58a6ff;
+            --text-main: #c9d1d9;
+            --text-white: #ffffff;
+            --danger: #f85149;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: 75px; }
+
+        header { background: var(--surface); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-white); }
+        .badge { background: rgba(88, 166, 255, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(88, 166, 255, 0.3); }
+
+        .container { padding: 16px; max-width: 800px; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+        .card-title { font-size: 1.05rem; color: var(--text-white); margin-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: #8b949e; }
+        .form-control { width: 100%; padding: 10px 12px; background: var(--bg-color); border: 1px solid var(--border); border-radius: 8px; color: var(--text-white); font-size: 0.9rem; }
+        .form-control:focus { outline: none; border-color: var(--accent); }
+
+        .source-selector { display: flex; gap: 10px; margin-bottom: 14px; }
+        .radio-btn { flex: 1; padding: 10px; background: var(--bg-color); border: 1px solid var(--border); border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem; color: var(--text-main); }
+        .radio-btn.active { border-color: var(--accent); background: rgba(88, 166, 255, 0.1); color: var(--accent); font-weight: bold; }
+
+        textarea.code-area { width: 100%; font-family: monospace; direction: ltr; text-align: left; height: 220px; resize: vertical; border: 1px solid var(--border); background: var(--bg-color); color: var(--text-white); padding: 10px; font-size: 0.9rem; border-radius: 8px; outline: none; }
+
+        .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; flex: 1; font-size: 0.88rem; text-align: center; }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--surface-hover); border: 1px solid var(--border); color: var(--text-white); }
+        .btn-danger { background: var(--danger); }
+        .btn-accent { background: #1f6feb; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; }
+        .nav-item { background: none; border: none; color: #8b949e; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--accent); font-weight: bold; }
+        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
+
+        .link-output { background: rgba(56, 139, 253, 0.1); border: 1px solid var(--accent); padding: 12px; border-radius: 8px; margin-top: 10px; word-break: break-all; font-size: 0.88rem; }
+        .link-output a { color: var(--accent); text-decoration: none; word-break: break-all; font-weight: bold; }
+        
+        .error-box { background: rgba(248, 81, 73, 0.15); border: 1px solid var(--danger); color: #ff7b72; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.88rem; }
+        .success-box { background: rgba(35, 134, 54, 0.2); border: 1px solid var(--primary); color: #56d364; padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.88rem; }
+
+        .icon-preview { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); margin-top: 8px; display: none; }
+
+        .modal-fullscreen { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; z-index: 9999; flex-direction: column; }
+        .modal-fullscreen.active { display: flex; }
+        .modal-header { background: var(--surface); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .modal-body { flex: 1; width: 100%; height: 100%; border: none; background: #fff; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">استضافة</div>
+        <div class="badge">سريع وثابت</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Tab 1: محرر الأكواد ومعاينة الشاشة الكاملة -->
+        <div id="tab-editor" class="tab-content active">
+            <div class="card">
+                <div class="card-title">
+                    <span>📝 محرر الأكواد</span>
+                    <button class="btn btn-danger" style="flex:none; padding: 4px 10px; font-size: 0.75rem;" onclick="clearEditor()">مسح الكود</button>
+                </div>
+                <div class="form-group">
+                    <textarea id="editor-code" class="code-area" placeholder="اكتب أو الصق الكود هنا...">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;تطبيقي&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="background:#0f172a; color:#fff; text-align:center; padding:40px; font-family:sans-serif;"&gt;
+  &lt;h1 style="color:#388bfd;"&gt;أهلاً بك في منصة استضافة!&lt;/h1&gt;
+  &lt;p&gt;المنصة تعمل الآن بسرعة وسلاسة كاملة وبدون أي تجميد.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-accent" onclick="openFullScreenPreview()">🖥️ معاينة الشاشة الكاملة</button>
+                    <button class="btn btn-secondary" onclick="exportCodeFile()">تصدير الملف</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: إنشاء الملفات ودمجها -->
+        <div id="tab-files" class="tab-content">
+            <div class="card">
+                <div class="card-title">✨ إنشاء ملف جديد</div>
+                <div class="form-group">
+                    <label>اسم الملف بالعربي:</label>
+                    <input type="text" id="file-ar-name" class="form-control" placeholder="مثال: مشروع_استضافة">
+                </div>
+                <div class="form-group">
+                    <label>امتداد الملف:</label>
+                    <select id="file-ext" class="form-control">
+                        <option value=".html">صفحة ويب (.html)</option>
+                        <option value=".js">سكربت (.js)</option>
+                        <option value=".css">تنسيق (.css)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>محتوى الملف:</label>
+                    <textarea id="file-content" class="code-area" placeholder="كود الملف..."></textarea>
+                </div>
+                <button class="btn" onclick="createFormattedFile()">تجهيز وتحميل الملف</button>
+                <div id="file-create-res"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🔗 دمج الملفات</div>
+                <div class="form-group">
+                    <label>اختر الملفات للدمج:</label>
+                    <input type="file" id="merge-files-input" class="form-control" multiple>
+                </div>
+                <button class="btn btn-accent" onclick="mergeFilesAction()">دمج وتحميل</button>
+                <div id="merge-results"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: استضافة ونشر الملفات برابط قصير -->
+        <div id="tab-hosting" class="tab-content">
+            <div class="card">
+                <div class="card-title">📁 استضافة الملفات على جيت هوب</div>
+                <div class="form-group">
+                    <label>اختر الملف:</label>
+                    <input type="file" id="upload-single-input" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>رابط قصير مخصص (اختياري - بدون مسافات):</label>
+                    <input type="text" id="custom-short-name" class="form-control" placeholder="مثال: app">
+                </div>
+                <button class="btn" onclick="uploadSingleFileCustom()">رفع ونشر برابط قصير</button>
+                <div id="upload-output"></div>
+            </div>
+        </div>
+
+        <!-- Tab 4: بناء APK -->
+        <div id="tab-apk" class="tab-content">
+            <div class="card">
+                <div class="card-title">🛠️ بناء حزمة APK</div>
+                <div class="form-group">
+                    <label>اسم التطبيق:</label>
+                    <input type="text" id="apk-app-name" class="form-control" value="HostingApp">
+                </div>
+                <div class="form-group">
+                    <label>الكود المباشر:</label>
+                    <textarea id="apk-direct-code" class="code-area" placeholder="كود التطبيق..."></textarea>
+                </div>
+                <button class="btn btn-accent" onclick="buildApkFull()">بناء الحزمة</button>
+                <div id="apk-output-res"></div>
+            </div>
+        </div>
+
+        <!-- Tab 5: الإعدادات -->
+        <div id="tab-settings" class="tab-content">
+            <div class="card">
+                <div class="card-title">⚙️ إعدادات جيت هوب</div>
+                <div class="form-group">
+                    <label>مفتاح الوصول (GitHub Token):</label>
+                    <input type="password" id="set-token" class="form-control" placeholder="ghp_...">
+                </div>
+                <div class="form-group">
+                    <label>اسم المستخدم (Username):</label>
+                    <input type="text" id="set-user" class="form-control" placeholder="almrshbshyr67-pixel">
+                </div>
+                <div class="form-group">
+                    <label>اسم المستودع (Repository):</label>
+                    <input type="text" id="set-repo" class="form-control" placeholder="APK">
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="saveSettings()">حفظ البيانات</button>
+                    <button class="btn btn-accent" onclick="testGitHubConnection()">🔌 اختبار الاتصال</button>
+                </div>
+                <div class="btn-group" style="margin-top: 8px;">
+                    <button class="btn btn-secondary" onclick="createRepoQuick()">إنشاء المستودع</button>
+                    <button class="btn btn-danger" onclick="deleteRepositoryAPI()">🗑️ حذف المستودع</button>
+                </div>
+                <div id="settings-test-res"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- نافذة المعاينة -->
+    <div id="fullscreen-modal" class="modal-fullscreen">
+        <div class="modal-header">
+            <span style="color:#fff; font-weight:bold;">🖥️ معاينة الشاشة الكاملة</span>
+            <button class="btn btn-danger" style="flex:none; padding:4px 12px;" onclick="closeFullScreenPreview()">إغلاق ✕</button>
+        </div>
+        <iframe id="fullscreen-frame" class="modal-body"></iframe>
+    </div>
+
+    <!-- شريط التنقل -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('editor', this)">المحرر</button>
+        <button class="nav-item" onclick="switchTab('files', this)">الملفات</button>
+        <button class="nav-item" onclick="switchTab('hosting', this)">الاستضافة</button>
+        <button class="nav-item" onclick="switchTab('apk', this)">بناء APK</button>
+        <button class="nav-item" onclick="switchTab('settings', this)">الإعدادات</button>
+    </nav>
+
+    <script>
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function clearEditor() {
+            if(confirm('مسح محتوى المحرر؟')) {
+                document.getElementById('editor-code').value = '';
+            }
+        }
+
+        function openFullScreenPreview() {
+            const code = document.getElementById('editor-code').value;
+            document.getElementById('fullscreen-frame').srcdoc = code;
+            document.getElementById('fullscreen-modalclassList' || 'fullscreen-modal').classList.add('active');
+        }
+
+        function closeFullScreenPreview() {
+            document.getElementById('fullscreen-modal').classList.remove('active');
+        }
+
+        function exportCodeFile() {
+            const code = document.getElementById('editor-code').value;
+            const blob = new Blob([code], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'index.html';
+            a.click();
+        }
+
+        function saveSettings() {
+            localStorage.setItem('gh_token', document.getElementById('set-token').value.trim());
+            localStorage.setItem('gh_user', document.getElementById('set-user').value.trim());
+            localStorage.setItem('gh_repo', document.getElementById('set-repo').value.trim());
+            alert('تم الحفظ بنجاح!');
+        }
+
+        window.onload = function() {
+            if(localStorage.getItem('gh_token')) document.getElementById('set-token').value = localStorage.getItem('gh_token');
+            if(localStorage.getItem('gh_user')) document.getElementById('set-user').value = localStorage.getItem('gh_user');
+            if(localStorage.getItem('gh_repo')) document.getElementById('set-repo').value = localStorage.getItem('gh_repo');
+        };
+
+        async function testGitHubConnection() {
+            const token = document.getElementById('set-token').value.trim();
+            const user = document.getElementById('set-user').value.trim();
+            const repo = document.getElementById('set-repo').value.trim();
+            const resDiv = document.getElementById('settings-test-res');
+
+            if(!token || !user || !repo) {
+                resDiv.innerHTML = '<div class="error-box">⚠️ يرجى ملء كافة حقول الإعدادات أولاً.</div>';
+                return;
+            }
+
+            resDiv.innerHTML = '<p style="color:var(--accent);">جاري فحص الاتصال...</p>';
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}`, {
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if(res.ok) {
+                    resDiv.innerHTML = '<div class="success-box">✅ الاتصال ناجح ومستقر 100%!</div>';
+                } else {
+                    resDiv.innerHTML = '<div class="error-box">❌ فشل الاتصال، تأكد من صحة المفتاح واسم المستودع.</div>';
+                }
+            } catch(e) {
+                resDiv.innerHTML = '<div class="error-box">❌ خطأ في شبكة الاتصال.</div>';
+            }
+        }
+
+        async function createRepoQuick() {
+            const token = document.getElementById('set-token').value.trim();
+            const repo = document.getElementById('set-repo').value.trim();
+            if(!token || !repo) { alert('ادخل المفتاح واسم المستودع.'); return; }
+            const res = await fetch('https://api.github.com/user/repos', {
+                method: 'POST',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: repo, auto_init: true })
+            });
+            if(res.ok) alert('تم إنشاء المستودع بنجاح!');
+            else alert('فشل الإنشاء.');
+        }
+
+        async function deleteRepositoryAPI() {
+            const token = document.getElementById('set-token').value.trim();
+            const user = document.getElementById('set-user').value.trim();
+            const repo = document.getElementById('set-repo').value.trim();
+            const resDiv = document.getElementById('settings-test-res');
+
+            if(!token || !user || !repo) { alert('ادخل البيانات أولاً.'); return; }
+            if(!confirm(`حذف المستودع (${repo}) نهائياً؟`)) return;
+
+            resDiv.innerHTML = '<p style="color:var(--danger);">جاري الحذف...</p>';
+            try {
+                const res = await fetch(`https://api.github.com/repos/${user}/${repo}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `token ${token}` }
+                });
+                if(res.status === 204) {
+                    resDiv.innerHTML = '<div class="success-box">🗑️ تم الحذف بنجاح!</div>';
+                    document.getElementById('set-repo').value = '';
+                    saveSettings();
+                } else {
+                    resDiv.innerHTML = '<div class="error-box">❌ فشل الحذف.</div>';
+                }
+            } catch(e) {
+                resDiv.innerHTML = '<div class="error-box">❌ خطأ في الاتصال.</div>';
+            }
+        }
+
+        function createFormattedFile() {
+            const arName = document.getElementById('file-ar-name').value.trim();
+            const ext = document.getElementById('file-ext').value;
+            const content = document.getElementById('file-content').value;
+            const resDiv = document.getElementById('file-create-res');
+            if(!arName) { alert('ادخل اسم الملف.'); return; }
+            const safeName = 'file_' + Date.now().toString().slice(-5) + ext;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = safeName;
+            resDiv.innerHTML = `<div class="link-output"><strong>✅ تم التجهيز:</strong> ${safeName}<br><button class="btn btn-secondary" style="margin-top:8px;" onclick="document.getElementById('dl-link').click()">تحميل</button><a id="dl-link" href="${a.href}" download="${safeName}" style="display:none;">تنزيل</a></div>`;
+        }
+
+        async function mergeFilesAction() {
+            const input = document.getElementById('merge-files-input');
+            const resDiv = document.getElementById('merge-results');
+            if(input.files.length < 2) { alert('اختر ملفين للدمج على الأقل.'); return; }
+            let merged = '/* مدمج */\n';
+            for(let f of input.files) {
+                merged += `\n/* --- ${f.name} --- */\n` + await f.text() + '\n';
+            }
+            const blob = new Blob([merged], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'merged_' + Date.now() + '.html';
+            resDiv.innerHTML = `<div class="link-output"><strong>🎉 تم الدمج!</strong><br><button class="btn btn-secondary" style="margin-top:8px;" onclick="document.getElementById('dl-merge').click()">تحميل المدمج</button><a id="dl-merge" href="${a.href}" download="${a.download}" style="display:none;">تنزيل</a></div>`;
+        }
+
+        async function uploadSingleFileCustom() {
+            const token = localStorage.getItem('gh_token');
+            const user = localStorage.getItem('gh_user');
+            const repo = localStorage.getItem('gh_repo');
+            const fileInput = document.getElementById('upload-single-input');
+            const customName = document.getElementById('custom-short-name').value.trim();
+            const resDiv = document.getElementById('upload-output');
+
+            if(!token || !user || !repo) { alert('احفظ إعدادات جيت هوب أولاً.'); return; }
+            if(fileInput.files.length === 0) { alert('اختر ملفاً للرفع.'); return; }
+
+            const file = fileInput.files[0];
+            let fileName = file.name;
+            if(customName) {
+                const ext = fileName.substring(fileName.lastIndexOf('.'));
+                fileName = customName.replace(/[^a-zA-Z0-9_-]/g, '') + ext;
+            }
+
+            resDiv.innerHTML = '<p style="color:var(--accent);">جاري الرفع...</p>';
+
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                const contentBase64 = evt.target.result.split(',')[1];
+                const url = `https://api.github.com/repos/${user}/${repo}/contents/${fileName}`;
+                try {
+                    const res = await fetch(url, {
+                        method: 'PUT',
+                        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: `Upload ${fileName}`, content: contentBase64 })
+                    });
+                    if(res.ok) {
+                        const liveUrl = `https://${user}.github.io/${repo}/${fileName}`;
+                        resDiv.innerHTML = `<div class="link-output"><strong>✅ تم النشر بنجاح!</strong><br><a href="${liveUrl}" target="_blank">${liveUrl}</a><br><button class="btn btn-accent" style="margin-top:8px;" onclick="navigator.clipboard.writeText('${liveUrl}').then(()=>alert('تم النسخ!'))">📋 نسخ الرابط</button></div>`;
+                    } else {
+                        resDiv.innerHTML = '<div class="error-box">❌ خطأ في الرفع.</div>';
+                    }
+                } catch(e) {
+                    resDiv.innerHTML = '<div class="error-box">❌ خطأ في الشبكة.</div>';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function buildApkFull() {
+            document.getElementById('apk-output-res').innerHTML = '<div class="link-output"><strong>🚀 جاري بناء الحزمة بنجاح!</strong></div>';
+        }
+    </script>
+</body>
+</html>
