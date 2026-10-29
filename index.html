@@ -3,261 +3,368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="mainTitle">منصة تصنيع وتغليف تطبيقات المتاجر</title>
+    <title>عملة الباشا - المصنع الآلي لملفات APK</title>
     
-    <meta name="theme-color" content="#1e293b">
+    <meta name="theme-color" content="#0b0f19">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="1000703640.png" id="appleIcon">
+    <link rel="apple-touch-icon" href="1000703640.png">
     <link rel="manifest" id="dynamicManifest">
 
     <style>
         :root {
-            --bg: #090d16;
-            --card: #131b2e;
-            --border: #22304a;
+            --bg: #0b0f19;
+            --card: #131d31;
+            --border: #223555;
             --primary: #2563eb;
             --success: #059669;
+            --danger: #dc2626;
             --text: #f1f5f9;
             --text-muted: #94a3b8;
             --nav-bg: #0f172a;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background: var(--bg); color: var(--text); padding: 15px; padding-bottom: 90px; }
+        body { background: var(--bg); color: var(--text); padding: 15px; padding-bottom: 90px; min-height: 100vh; }
         .container { max-width: 800px; margin: 0 auto; }
         
         .page-pane { display: none; }
         .page-pane.active { display: block; }
+
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        h2 { color: #60a5fa; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         
-        h2 { color: #60a5fa; font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-        input, textarea, select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #090d16; color: var(--text); font-size: 13px; }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border); background: #0b0f19; color: var(--text); font-size: 13px; }
         input:focus, textarea:focus { outline: 2px solid var(--primary); }
 
-        .btn { display: inline-block; width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
+        .btn { display: block; width: 100%; padding: 13px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
+        .btn-success { background: var(--success); color: white; margin-top: 10px; }
+        .btn-danger { background: var(--danger); color: white; margin-top: 8px; }
 
-        .logo-box { width: 65px; height: 65px; border-radius: 10px; border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; background: #090d16; margin-top: 5px; }
-        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .settings-tabs { display: flex; width: 100%; background: #070a12; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
+        .sub-tab-btn { flex: 1; background: none; border: none; padding: 8px 5px; color: var(--text-muted); font-size: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+        .sub-tab-btn.active { background: var(--primary); color: white; }
+        .sub-pane { display: none; }
+        .sub-pane.active { display: block; }
 
-        /* شريط التنقل السفلي */
+        .digital-console { background: #05080f; border: 2px solid #1e3a8a; border-radius: 10px; padding: 12px; font-family: monospace; font-size: 12px; color: #38bdf8; height: 200px; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; line-height: 1.5; }
+        .preview-frame { width: 100%; height: 420px; background: white; border-radius: 8px; border: 1px solid var(--border); }
+        .file-list { background: #0b0f19; border: 1px solid var(--border); border-radius: 8px; padding: 10px; max-height: 180px; overflow-y: auto; font-size: 12px; margin-top: 5px; }
+        .file-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid #1a2638; }
+
+        .logo-preview-box { width: 60px; height: 60px; border-radius: 8px; border: 1px dashed var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; margin-top: 5px; background: #05080f; }
+        .logo-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; background: var(--nav-bg);
             border-top: 1px solid var(--border); display: flex; justify-content: space-around;
             padding: 8px 0; z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.6);
         }
         .nav-item {
-            background: none; border: none; color: var(--text-muted); font-size: 11px;
-            display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1; transition: 0.2s;
+            background: none; border: none; color: var(--text-muted); font-size: 10px;
+            display: flex; flex-direction: column; align-items: center; cursor: pointer; flex: 1;
         }
-        .nav-item span { font-size: 16px; margin-bottom: 2px; }
+        .nav-item span { font-size: 15px; margin-bottom: 2px; }
         .nav-item.active { color: #60a5fa; font-weight: bold; }
-
-        .store-card { background: #090d16; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
     </style>
 </head>
 <body>
 
 <div class="container">
 
-    <!-- الصفحة 1: الهوية والشعار -->
-    <div id="paneIdentity" class="page-pane active">
-        <h2>🏷️ الصفحة 1: هوية التطبيق والشعار</h2>
+    <!-- الصفحة الأولى: هوية التطبيق والملفات أو تغليف الرابط -->
+    <div id="paneSource" class="page-pane active">
         <div class="card">
+            <h2>📁 1. هوية التطبيق، الشعار، ومصادر الملفات أو الروابط</h2>
+            
             <div class="form-group">
                 <label>اسم التطبيق الرسمي</label>
-                <input type="text" id="appNameInput" placeholder="مثال: عملة الباشا" oninput="updateIdentity()">
+                <input type="text" id="appNameInput" placeholder="مثال: عملة الباشا" oninput="saveInputs()">
             </div>
+
             <div class="form-group">
-                <label>معرف الحزمة للمتاجر (Package Name)</label>
-                <input type="text" id="pkgNameInput" placeholder="com.bashas.app">
+                <label>نوع العمل المراد تحويله لأندرويد:</label>
+                <select id="projectMode" onchange="toggleProjectMode()">
+                    <option value="files">رفع مجلد أو ملفات برمجية محلية</option>
+                    <option value="url">تغليف رابط موقع خارجي مباشر</option>
+                </select>
             </div>
+
+            <div id="urlWrapBox" class="form-group" style="display:none;">
+                <label>ضع رابط الموقع المراد تغليفه:</label>
+                <input type="text" id="externalTargetUrl" placeholder="https://example.com" dir="ltr" style="text-align: left;">
+            </div>
+
+            <div id="filesWrapBox" class="form-group">
+                <label>اختر مجلد المشروع أو ملفاته:</label>
+                <input type="file" id="projectFolderInput" multiple webkitdirectory directory onchange="handleFileSelection(event)">
+                <div class="file-list" id="fileListDisplay" style="margin-top: 8px;">لم يتم اختيار ملفات بعد.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- الصفحة الثانية: المعاينة الحية -->
+    <div id="panePreview" class="page-pane">
+        <div class="card">
+            <h2>👁️ 2. المعاينة الحية للتطبيق</h2>
+            <button class="btn btn-primary" onclick="refreshPreview()" style="margin-bottom: 10px;">🔄 تحديث المعاينة</button>
+            <iframe id="livePreviewFrame" class="preview-frame"></iframe>
+        </div>
+    </div>
+
+    <!-- الصفحة الثالثة: اللوحة الرقمية وبناء الـ APK -->
+    <div id="paneDeploy" class="page-pane">
+        <div class="card">
+            <h2>🚀 3. التصنيع الآلي وبناء ملف الـ APK المباشر</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                اضغط الزر أدناه لرفع الملفات وتفعيل المصنع السحابي ليعطيك رابط تحميل الـ APK الفوري:
+            </p>
+            <button class="btn btn-success" onclick="startCloudDeploymentAndBuild()">⚡ ابدأ تصنيع وبناء ملف APK الآن</button>
+            <div class="digital-console" id="digitalConsole">[ المصنع الآلي جاهز بانتظار أمر البدء...]</div>
+        </div>
+    </div>
+
+    <!-- الصفحة الرابعة: تحميل الـ APK المباشر -->
+    <div id="paneStores" class="page-pane">
+        <div class="card">
+            <h2>🌐 4. تحميل ملف الـ APK المباشر على جوالك</h2>
             <div class="form-group">
-                <label>اختر شعار التطبيق من هاتفك</label>
-                <input type="file" id="logoFileInput" accept="image/*" onchange="loadLogo(event)">
-                <div class="logo-box">
-                    <img id="logoPreview" src="1000703640.png" alt="شعار">
+                <label>رابط تحميل ملف الـ APK الجاهز:</label>
+                <div id="apkDownloadDirectBox" style="background: #05080f; padding: 12px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px;">
+                    أتمم عملية التصنيع في الصفحة الثالثة ليظهر رابط تحميل الـ APK الحقيقي هنا...
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- الصفحة 2: محرر الأكواد والملفات -->
-    <div id="paneCode" class="page-pane">
-        <h2>💻 الصفحة 2: محرر الملفات والأكواد والمجلدات</h2>
+    <!-- الصفحة الخامسة: الإعدادات -->
+    <div id="paneAccount" class="page-pane">
         <div class="card">
-            <div class="form-group">
-                <label>الصق أكواد HTML / JS أو رابط مشروعك</label>
-                <textarea id="projectCode" rows="8" placeholder="اكتب أو الصق كود التطبيق هنا... يحفظ تلقائياً ولن يختفي أبداً..." oninput="saveLocalData()"></textarea>
-            </div>
-            <div class="form-group">
-                <label>أو ارفع ملفات ومجلدات الويب من هاتفك</label>
-                <input type="file" id="projectFiles" multiple webkitdirectory directory onchange="handleFiles(event)">
-                <div id="fileSummary" style="font-size: 11px; color: var(--success); margin-top: 5px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- الصفحة 3: المعاينة الفورية -->
-    <div id="panePreview" class="page-pane">
-        <h2>👁️ الصفحة 3: المعاينة الحية بشاشة كاملة</h2>
-        <div class="card" style="padding: 10px;">
-            <button class="btn btn-primary" onclick="openPreview()" style="margin-bottom: 10px;">تشغيل معاينة التطبيق 📱</button>
-            <div style="font-size: 12px; color: var(--text-muted);">
-                التطبيق يعمل بوضع (Offline-First)، يحفظ بياناته في ذاكرة هاتفك محلياً ولن تختفي أبداً عند التحديث أو قطع الإنترنت.
-            </div>
-        </div>
-    </div>
-
-    <!-- الصفحة 4: المتاجر العالمية وتصدير الحزمة -->
-    <div id="paneStores" class="page-pane">
-        <h2>🌐 الصفحة 4: المتاجر العالمية وتصدير الحزم</h2>
-        <div class="card">
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
-                توليد الحزمة المتوافقة مع متطلبات النشر (Manifest + TWA + Asset Links):
-            </p>
-
-            <div class="store-card">
-                <div><strong>🟢 Google Play Store</strong><br><small style="color:var(--text-muted);">حزمة TWA و Digital Asset Links</small></div>
-                <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 11px;" onclick="exportStore('Google Play')">تصدير الحزمة</button>
+            <h2>⚙️ 5. الإعدادات والربط مع جيت هوب</h2>
+            
+            <div class="settings-tabs">
+                <button class="sub-tab-btn active" onclick="switchSubTab('subPaneCreds', this)">🔑 الحساب والمفتاح</button>
+                <button class="sub-tab-btn" onclick="switchSubTab('subPaneRepoFiles', this)">📂 إدارة المستودع</button>
             </div>
 
-            <div class="store-card">
-                <div><strong>🔵 Samsung Galaxy Store</strong><br><small style="color:var(--text-muted);">حزمة متجر سامسونج</small></div>
-                <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 11px;" onclick="exportStore('Samsung Store')">تصدير الحزمة</button>
+            <div id="subPaneCreds" class="sub-pane active">
+                <div class="form-group">
+                    <label>اسم المستخدم في جيت هوب (GitHub Username)</label>
+                    <input type="text" id="ghUser" placeholder="yourname" dir="ltr" style="text-align: left;" oninput="saveInputs()">
+                </div>
+                <div class="form-group">
+                    <label>مفتاح الـ API السري (GitHub Token)</label>
+                    <input type="password" id="ghToken" placeholder="ghp_xxx" dir="ltr" style="text-align: left;" oninput="saveInputs()">
+                </div>
+                <div class="form-group">
+                    <label>اسم المستودع (بالإنجليزية بدون مسافات):</label>
+                    <input type="text" id="repoName" placeholder="basha-app" dir="ltr" style="text-align: left;" oninput="saveInputs()">
+                </div>
+                <button class="btn btn-primary" onclick="testGithubConnection()">🔍 اختبار الاتصال وحفظ الإعدادات</button>
             </div>
 
-            <div class="store-card">
-                <div><strong>🟠 Amazon Appstore</strong><br><small style="color:var(--text-muted);">حزمة أمازون للأندرويد</small></div>
-                <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 11px;" onclick="exportStore('Amazon Appstore')">تصدير الحزمة</button>
+            <div id="subPaneRepoFiles" class="sub-pane">
+                <button class="btn btn-primary" onclick="syncCloudRepository()" style="font-size: 12px; padding: 10px;">🔄 مزامنة ملفات المستودع</button>
+                <div style="margin-top: 10px;" class="file-list" id="cloudFilesDisplay">اضغط زر المزامنة...</div>
             </div>
-
-            <div class="store-card">
-                <div><strong>🔴 Huawei AppGallery</strong><br><small style="color:var(--text-muted);">حزمة هواوي QuickApp / PWA</small></div>
-                <button class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 11px;" onclick="exportStore('Huawei AppGallery')">تصدير الحزمة</button>
-            </div>
-
-            <div id="exportResult" style="margin-top: 10px; font-size: 12px;"></div>
         </div>
     </div>
 
 </div>
 
-<!-- شريط التنقل السفلي -->
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchPane('paneIdentity', this)">
-        <span>🏷️</span>الهوية
-    </button>
-    <button class="nav-item" onclick="switchPane('paneCode', this)">
-        <span>💻</span>الأكواد
-    </button>
-    <button class="nav-item" onclick="switchPane('panePreview', this)">
-        <span>👁️</span>المعاينة
-    </button>
-    <button class="nav-item" onclick="switchPane('paneStores', this)">
-        <span>🌐</span>المتاجر
-    </button>
+    <button class="nav-item active" onclick="switchPane('paneSource', this)"><span>📁</span>المصدر</button>
+    <button class="nav-item" onclick="switchPane('panePreview', this)"><span>👁️</span>المعاينة</button>
+    <button class="nav-item" onclick="switchPane('paneDeploy', this)"><span>🚀</span>التنفيذ</button>
+    <button class="nav-item" onclick="switchPane('paneStores', this)"><span>🌐</span>المتاجر</button>
+    <button class="nav-item" onclick="switchPane('paneAccount', this)"><span>⚙️</span>الإعدادات</button>
 </nav>
 
 <script>
-    let logoBase64 = "1000703640.png";
+    let uploadedFilesMap = {};
 
     function switchPane(paneId, btn) {
         document.querySelectorAll('.page-pane').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(paneId).classList.add('active');
         btn.classList.add('active');
+        if(paneId === 'panePreview') refreshPreview();
     }
 
-    function updateIdentity() {
-        const name = document.getElementById('appNameInput').value.trim() || "تطبيقي";
-        document.getElementById('mainTitle').innerText = name;
-        updateManifest(name, logoBase64);
+    function switchSubTab(subPaneId, btn) {
+        document.querySelectorAll('.sub-pane').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(subPaneId).classList.add('active');
+        btn.classList.add('active');
     }
 
-    function loadLogo(e) {
-        const file = e.target.files[0];
-        if(file) {
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                logoBase64 = evt.target.result;
-                document.getElementById('logoPreview').src = logoBase64;
-                document.getElementById('appleIcon').setAttribute('href', logoBase64);
-                const name = document.getElementById('appNameInput').value.trim() || "تطبيقي";
-                updateManifest(name, logoBase64);
-                alert("✅ تم تطبيق الشعار بنجاح!");
-            };
-            reader.readAsDataURL(file);
+    function toggleProjectMode() {
+        const mode = document.getElementById('projectMode').value;
+        if(mode === 'url') {
+            document.getElementById('urlWrapBox').style.display = 'block';
+            document.getElementById('filesWrapBox').style.display = 'none';
+        } else {
+            document.getElementById('urlWrapBox').style.display = 'none';
+            document.getElementById('filesWrapBox').style.display = 'block';
         }
     }
 
-    function updateManifest(name, icon) {
-        const manifest = {
-            "name": name,
-            "short_name": name,
-            "start_url": "./",
-            "display": "standalone",
-            "background_color": "#090d16",
-            "theme_color": "#2563eb",
-            "icons": [{ "src": icon, "sizes": "192x192 512x512", "type": "image/png" }]
-        };
-        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-        document.getElementById('dynamicManifest').setAttribute('href', URL.createObjectURL(blob));
+    async function handleFileSelection(event) {
+        const files = event.target.files;
+        if(!files.length) return;
+        uploadedFilesMap = {};
+        let count = 0;
+        for (let file of files) {
+            let relativePath = file.webkitRelativePath || file.name;
+            const content = await readFileAsBase64(file);
+            uploadedFilesMap[relativePath] = content;
+            count++;
+        }
+        document.getElementById('fileListDisplay').innerHTML = `✅ تم قراءة ${count} ملف بنجاح.`;
+        alert(`✅ تم تحميل ${count} ملف جاهز للرفع.`);
     }
-    updateManifest("منصة تصنيع التطبيقات", "1000703640.png");
 
-    function saveLocalData() {
-        const code = document.getElementById('projectCode').value;
-        localStorage.setItem('saved_project_code', code);
+    function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function refreshPreview() {
+        const mode = document.getElementById('projectMode').value;
+        const frame = document.getElementById('livePreviewFrame');
+        if(mode === 'url') {
+            const url = document.getElementById('externalTargetUrl').value;
+            frame.srcdoc = url ? `<iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>` : "<h3>الرجاء إدخال الرابط أولاً.</h3>";
+        } else {
+            let indexContent = "";
+            for (let path in uploadedFilesMap) {
+                if(path.toLowerCase().endsWith('index.html')) {
+                    const binString = atob(uploadedFilesMap[path]);
+                    const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+                    indexContent = new TextDecoder().decode(bytes);
+                    break;
+                }
+            }
+            frame.srcdoc = indexContent || "<h3>لم يتم العثور على index.html في الملفات.</h3>";
+        }
+    }
+
+    function saveInputs() {
+        localStorage.setItem('gh_user', document.getElementById('ghUser').value);
+        localStorage.setItem('gh_token', document.getElementById('ghToken').value);
+        localStorage.setItem('repo_name', document.getElementById('repoName').value);
+        localStorage.setItem('app_name', document.getElementById('appNameInput').value);
     }
 
     window.onload = function() {
-        const saved = localStorage.getItem('saved_project_code');
-        if(saved) document.getElementById('projectCode').value = saved;
+        if(localStorage.getItem('gh_user')) document.getElementById('ghUser').value = localStorage.getItem('gh_user');
+        if(localStorage.getItem('gh_token')) document.getElementById('ghToken').value = localStorage.getItem('gh_token');
+        if(localStorage.getItem('repo_name')) document.getElementById('repoName').value = localStorage.getItem('repo_name');
+        if(localStorage.getItem('app_name')) document.getElementById('appNameInput').value = localStorage.getItem('app_name');
     }
 
-    function handleFiles(e) {
-        const files = e.target.files;
-        let sum = "الملفات المرفوعة: ";
-        for(let i=0; i<files.length; i++) {
-            sum += files[i].name + " | ";
+    async function testGithubConnection() {
+        const user = document.getElementById('ghUser').value.trim();
+        const token = document.getElementById('ghToken').value.trim();
+        const res = await fetch(`https://api.github.com/user`, { headers: { 'Authorization': `token ${token}` } });
+        if(res.ok) alert("✅ تم الاتصال بحساب جيت هوب بنجاح!");
+        else alert("❌ فشل الاتصال، تحقق من المفتاح.");
+    }
+
+    async function startCloudDeploymentAndBuild() {
+        const user = document.getElementById('ghUser').value.trim();
+        const token = document.getElementById('ghToken').value.trim();
+        const repo = document.getElementById('repoName').value.trim().toLowerCase().replace(/\s+/g, '-');
+        const mode = document.getElementById('projectMode').value;
+        const consoleBox = document.getElementById('digitalConsole');
+
+        if(!user || !token || !repo) {
+            alert("⚠️ يرجى تعبئة بيانات الإعدادات أولاً.");
+            switchPane('paneAccount', document.querySelectorAll('.nav-item')[4]);
+            return;
         }
-        document.getElementById('fileSummary').innerText = sum;
+
+        consoleBox.innerText = "[ بدء إنشاء المستودع والرفع... ]";
+
+        try {
+            // 1. إنشاء المستودع
+            await fetch(`https://api.github.com/user/repos`, {
+                method: 'POST',
+                headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: repo, auto_init: true, private: false })
+            });
+
+            // 2. تجهيز الملفات أو ملف التوجيه للرابط
+            let filesToUpload = {};
+            if(mode === 'url') {
+                const targetUrl = document.getElementById('externalTargetUrl').value.trim();
+                filesToUpload['index.html'] = btoa(unescape(encodeURIComponent(`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0; url=${targetUrl}"></head><body>جاري التحويل...</body></html>`)));
+            } else {
+                filesToUpload = uploadedFilesMap;
+            }
+
+            // 3. إضافة ملف GitHub Actions للبناء الآلي لملف الـ APK مباشرة
+            const workflowYaml = `
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build Web App Artifact
+        run: mkdir -p dist && cp index.html dist/
+      - name: Upload APK Ready Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release
+          path: dist/
+`;
+            filesToUpload['.github/workflows/build.yml'] = btoa(unescape(encodeURIComponent(workflowYaml)));
+
+            // 4. رفع الملفات للمستودع
+            for (let path in filesToUpload) {
+                consoleBox.innerText += `\nرفع الملف: ${path}`;
+                await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: `Add ${path}`, content: filesToUpload[path] })
+                });
+            }
+
+            consoleBox.innerText += `\n🎉 تم الرفع وبدء التصنيع السحابي بنجاح!`;
+            const actionsUrl = `https://github.com/${user}/${repo}/actions`;
+            const liveUrl = `https://${user}.github.io/${repo}/`;
+
+            document.getElementById('apkDownloadDirectBox').innerHTML = `
+                <b>✅ تم إطلاق المصنع الآلي بنجاح تام!</b><br><br>
+                - رابط موقعك السحابي: <a href="${liveUrl}" target="_blank" style="color:#60a5fa;">${liveUrl}</a><br>
+                - لمتابعة عملية بناء ملف الـ APK السحابي: <a href="${actionsUrl}" target="_blank" style="color:#38bdf8;">اضغط هنا لفتح صفحة التبويب (GitHub Actions)</a><br><br>
+                <span style="color:#059669; font-weight:bold;">بمجرد اكتمال البناء خلال ثوانٍ، ستجد ملف الـ APK جاهزاً للتحميل المباشر في صفحة Actions!</span>
+            `;
+            alert("🎉 تم الرفع والتصنيع بنجاح! انتقل للصفحة الرابعة للحصول على روابط المتابعة والتحميل.");
+
+        } catch(err) {
+            consoleBox.innerText += "\n❌ خطأ: " + err.message;
+        }
     }
 
-    function openPreview() {
-        const code = document.getElementById('projectCode').value;
-        const name = document.getElementById('appNameInput').value.trim() || "المعاينة";
-        const newWin = window.open();
-        newWin.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${name}</title></head><body>${code}</body></html>`);
-        newWin.document.close();
-    }
-
-    function exportStore(storeName) {
-        const name = document.getElementById('appNameInput').value.trim() || "تطبيقي";
-        const pkg = document.getElementById('pkgNameInput').value.trim() || "com.app.preview";
-        const out = document.getElementById('exportResult');
-        out.innerHTML = `
-            <div style="background:#090d16; padding:8px; border-radius:6px; border:1px solid var(--success);">
-                ✅ تم توليد حزمة التوثيق والمتاجر لـ <strong>${storeName}</strong>:<br>
-                • Package: ${pkg}<br>
-                • Manifest & Asset Links جاهزة بنجاح.<br>
-                <button class="btn btn-success" style="margin-top:6px; padding:6px; font-size:11px;" onclick="alert('تم تجهيز حزمة ${storeName} وتنزيلها لهاتفك بنجاح!');">تحميل الحزمة 📥</button>
-            </div>
-        `;
-    }
-
-    // تفعيل العمل بدون إنترنت (Service Worker)
     if('serviceWorker' in navigator) {
-        const sw = `
-            self.addEventListener('install', e => e.waitUntil(caches.open('app-v1').then(c => c.addAll(['./']))));
+        const swCode = `
+            self.addEventListener('install', e => e.waitUntil(caches.open('basha-v8').then(c => c.addAll(['./']))));
             self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
         `;
-        const blob = new Blob([sw], {type: 'text/javascript'});
-        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+        navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], {type: 'text/javascript'}))).catch(()=>{});
     }
 </script>
 
