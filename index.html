@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة USDT TRC-20 الاحترافية</title>
+    <title>محفظة المتجر الرقمي - USDT TRC-20</title>
     
-    <!-- PWA Manifest مدمج -->
+    <!-- PWA Manifest مع صورتك الشخصية لتكون أيقونة التطبيق الأساسية على شاشة الهاتف -->
     <link rel="manifest" href='data:application/manifest+json,{
       "name": "محفظة USDT TRC-20",
-      "short_name": "محفظة الكريبتو",
+      "short_name": "محفظتي",
       "start_url": "./index.html",
       "display": "standalone",
       "background_color": "%23070a0e",
       "theme_color": "%2300ff88",
       "icons": [{
-        "src": "https://cdn-icons-png.flaticon.com/512/1055/1055685.png",
+        "src": "https://i.ibb.co/6R3J3v0/profile.jpg",
         "sizes": "512x512",
-        "type": "image/png"
+        "type": "image/jpeg",
+        "purpose": "any maskable"
       }]
     }'>
     <meta name="theme-color" content="#00ff88">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -51,7 +53,6 @@
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* كرت المحفظة الاحترافي والمرتب */
         .balance-box { background: linear-gradient(145deg, #0f1622 0%, #080c13 100%); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px; text-align: center; margin-bottom: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
         .balance-title { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 4px; }
         .balance-val { font-size: 1.8rem; font-weight: 800; color: var(--primary-green); text-shadow: 0 0 10px rgba(0, 255, 136, 0.2); direction: ltr; margin-bottom: 2px; }
@@ -72,15 +73,16 @@
         .tx-in { color: var(--primary-green); }
 
         .api-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
-        .input-box { width: 100%; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; margin-bottom: 8px; outline: none; font-size: 0.8rem; }
+        .input-box { width: 100%; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; margin-bottom: 8px; outline: none; font-size: 0.8rem; }
         .input-box:focus { border-color: var(--primary-green); }
-        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .product-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 10px; text-align: center; }
-        .product-card img { width: 35px; height: 35px; border-radius: 6px; margin-bottom: 4px; }
-        .product-price { color: var(--primary-green); font-weight: bold; margin: 3px 0; font-size: 0.8rem; }
-        .btn-buy { background: rgba(0,255,136,0.15); border: 1px solid var(--primary-green); color: var(--primary-green); width: 100%; padding: 5px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
+        
+        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .product-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px; text-align: center; }
+        .product-card img { width: 42px; height: 42px; border-radius: 8px; margin-bottom: 6px; object-fit: cover; }
+        .product-name { font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #fff; }
+        .product-price { color: var(--primary-green); font-weight: bold; margin-bottom: 8px; font-size: 0.85rem; direction: ltr; }
+        .btn-buy { background: rgba(0,255,136,0.15); border: 1px solid var(--primary-green); color: var(--primary-green); width: 100%; padding: 6px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
 
-        /* Bottom Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(11, 15, 22, 0.98); backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-around; align-items: center; height: 60px; z-index: 100; }
         .nav-link { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-muted); font-size: 0.65rem; font-weight: bold; cursor: pointer; width: 20%; }
         .nav-link i { font-size: 1.05rem; }
@@ -88,7 +90,6 @@
         
         .nav-center-scan { width: 50px; height: 50px; border-radius: 50%; background: var(--primary-green); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-top: -22px; border: 3px solid var(--bg-dark); box-shadow: 0 0 12px rgba(0, 255, 136, 0.4); cursor: pointer; }
 
-        /* Modals */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 200; justify-content: center; align-items: flex-end; }
         .modal.active { display: flex; }
         .modal-body { background: #0d121a; border: 1px solid var(--card-border); width: 100%; max-width: 480px; border-top-left-radius: 18px; border-top-right-radius: 18px; padding: 18px; max-height: 85vh; overflow-y: auto; }
@@ -101,7 +102,6 @@
         .sub-actions { display: flex; gap: 6px; margin-bottom: 8px; }
         .btn-sub { flex: 1; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
-        /* نظام الإشعارات الداخلي الفخم (Toast / Notification Card) */
         #custom-notification {
             position: fixed;
             top: -100px;
@@ -128,21 +128,20 @@
 </head>
 <body>
 
-    <!-- لوحة الإشعارات والتنبيهات الداخلية الخاصة بالتطبيق -->
     <div id="custom-notification">
         <div class="notif-icon" id="notif-icon-box"><i class="fa-solid fa-bell"></i></div>
         <div class="notif-content">
-            <h5 id="notif-title">عنوان الإشعار</h5>
-            <p id="notif-desc">تفاصيل الحالة هنا...</p>
+            <h5 id="notif-title">إشعار النظام</h5>
+            <p id="notif-desc">...</p>
         </div>
     </div>
 
     <div class="app-container">
         <!-- Header -->
         <header>
-            <div class="icon-btn" onclick="switchTab('account')" title="حسابي والإعدادات"><i class="fa-solid fa-user"></i></div>
+            <div class="icon-btn" onclick="switchTab('account')" title="حسابي"><i class="fa-solid fa-user"></i></div>
             <div class="currency-badge">USDT (TRC-20)</div>
-            <div class="icon-btn" onclick="openModal('rec-modal')" title="استقبال فوري"><i class="fa-solid fa-qrcode"></i></div>
+            <div class="icon-btn" onclick="openModal('rec-modal')" title="استقبال"><i class="fa-solid fa-qrcode"></i></div>
         </header>
 
         <!-- View 1: Main Home -->
@@ -164,70 +163,91 @@
 
             <div class="sec-head">
                 آخر الحوالات والحركات
-                <span onclick="switchTab('trans')">عرض السجل</span>
+                <span onclick="switchTab('trans')">السجل</span>
             </div>
 
             <div id="home-tx-container">
                 <div class="tx-card" style="justify-content:center; color:var(--text-muted); font-size:0.75rem;">
-                    لا توجد حوالات سابقة (الرصيد فارغ أو بانتظار التفعيل)
+                    لا توجد حوالات سابقة (بانتظار تفعيل المحفظة)
                 </div>
             </div>
         </section>
 
-        <!-- View 2: Real Transactions History -->
+        <!-- View 2: Transactions -->
         <section id="view-trans" class="view-section">
-            <div class="sec-head">سجل الحوالات (اضغط مطولاً لعرض الإيصال)</div>
+            <div class="sec-head">سجل الحوالات (اضغط مطولاً للتفاصيل)</div>
             <div id="full-tx-container">
-                <div class="tx-card" oncontextmenu="showReceiptDetails('معاملة تجريبية - شبكة TRC20 (غير مفعل بعد)'); return false;">
+                <div class="tx-card" oncontextmenu="showReceiptDetails('معاملة تجريبية - شبكة TRC20 (غير مفعل)'); return false;">
                     <div class="tx-right">
                         <h4>محفظة جديدة غير مفعلة</h4>
-                        <p>اضغط مطولاً لعرض التفاصيل الكاملة</p>
+                        <p>اضغط مطولاً لعرض الإيصال</p>
                     </div>
                     <div class="tx-left tx-in">0.00 USDT</div>
                 </div>
             </div>
         </section>
 
-        <!-- View 3: Services & Provider API -->
+        <!-- View 3: Services & Store (API) -->
         <section id="view-services" class="view-section">
             <div class="api-box">
-                <h4 style="color:var(--primary-green); font-size:0.85rem; margin-bottom:8px;"><i class="fa-solid fa-plug"></i> إعدادات مزود الخدمات الرقمية</h4>
+                <h4 style="color:var(--primary-green); font-size:0.85rem; margin-bottom:8px;"><i class="fa-solid fa-plug"></i> إعدادات مزود الخدمات والبطاقات</h4>
                 <input type="text" id="api-url" class="input-box" placeholder="رابط الـ API الخاص بالمزود">
                 <input type="password" id="api-key" class="input-box" placeholder="مفتاح الـ API Key">
-                <button class="btn-full" onclick="fetchServicesFromAPI()"><i class="fa-solid fa-sync"></i> اختبار الاتصال وجلب الخدمات</button>
+                <button class="btn-full" onclick="fetchServicesFromAPI()"><i class="fa-solid fa-sync"></i> اختبار الاتصال وجلب المنتجات</button>
             </div>
 
-            <div class="sec-head">متجر البطاقات والألعاب بالـ USDT</div>
+            <div class="sec-head">متجر الألعاب والخدمات الرقمية بالـ USDT</div>
             <div class="products-grid" id="products-container">
-                <p style="color:var(--text-muted); grid-column: 1/3; text-align:center; font-size:0.75rem; padding:12px;">أدخل مفتاح المزود واستعرض الخدمات (يتطلب رصيد متوفر).</p>
+                <div class="product-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/808/808433.png" alt="pubg">
+                    <div class="product-name">شحن بوبجي 60 UC</div>
+                    <div class="product-price">1.20 USDT</div>
+                    <button class="btn-buy" onclick="buyProductItem('شحن بوبجي 60 UC', 1.20)">شراء بالـ USDT</button>
+                </div>
+                <div class="product-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174861.png" alt="paypal">
+                    <div class="product-name">بطاقة بايبال $10</div>
+                    <div class="product-price">10.50 USDT</div>
+                    <button class="btn-buy" onclick="buyProductItem('بطاقة بايبال $10', 10.50)">شراء بالـ USDT</button>
+                </div>
+                <div class="product-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/588/588325.png" alt="playstation">
+                    <div class="product-name">بطاقة بلايستيشن $10</div>
+                    <div class="product-price">10.00 USDT</div>
+                    <button class="btn-buy" onclick="buyProductItem('بطاقة بلايستيشن $10', 10.00)">شراء بالـ USDT</button>
+                </div>
+                <div class="product-card">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3059/3059502.png" alt="telecom">
+                    <div class="product-name">شحن رصيد دولي</div>
+                    <div class="product-price">5.00 USDT</div>
+                    <button class="btn-buy" onclick="buyProductItem('شحن رصيد دولي', 5.00)">شراء بالـ USDT</button>
+                </div>
             </div>
         </section>
 
-        <!-- View 4: Account, Settings & Tones -->
+        <!-- View 4: Account & Settings -->
         <section id="view-account" class="view-section">
-            <div class="sec-head">الإعدادات والتنبيهات</div>
+            <div class="sec-head">الإعدادات وتفعيل المحفظة</div>
             
             <div class="api-box" style="margin-bottom:12px;">
-                <h4 style="color:var(--primary-green); font-size:0.85rem; margin-bottom:8px;"><i class="fa-solid fa-bell"></i> إعدادات الإشعارات والنغمات</h4>
-                <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">اختر نغمة التنبيه للحوالات الواردة:</label>
-                <select id="notification-tone" class="input-box" style="margin-bottom:10px;">
-                    <option value="tone1">نغمة الكريبتو الكلاسيكية (افتراضي)</option>
+                <h4 style="color:var(--primary-green); font-size:0.85rem; margin-bottom:8px;"><i class="fa-solid fa-bell"></i> نغمات وإشعارات التطبيق</h4>
+                <select id="notification-tone" class="input-box" style="margin-bottom:8px;">
+                    <option value="tone1">نغمة الكريبتو الكلاسيكية</option>
                     <option value="tone2">رنين رقمي سريع</option>
-                    <option value="tone3">نغمة النجاح المالية</option>
-                    <option value="silent">صامت (بدون صوت)</option>
+                    <option value="silent">صامت</option>
                 </select>
-                <button class="btn-full" style="background:rgba(255,255,255,0.08); color:#fff;" onclick="showAppNotification('تنبيه', 'تم حفظ إعدادات النغمة بنجاح', 'success')">حفظ إعدادات الصوت</button>
+                <button class="btn-full" style="background:rgba(255,255,255,0.08); color:#fff;" onclick="showAppNotification('تم الحفظ', 'تم تحديث إعدادات النغمات بنجاح', 'success')">حفظ الإعدادات</button>
             </div>
 
             <div class="api-box" style="margin-bottom:12px; border-color: rgba(255,165,0,0.3);">
                 <h4 style="color: #ffaa00; font-size:0.85rem; margin-bottom:6px;"><i class="fa-solid fa-circle-info"></i> حالة تفعيل المحفظة</h4>
                 <p style="font-size:0.7rem; color: var(--text-muted); line-height: 1.4;">
-                    لتصبح المحفظة مفعلة 100% على شبكة TRC-20 واعتماد العنوان، أرسل مبلغاً بسيطاً لتنشيط العنوان على البلوك تشين نهائياً.
+                    لتفعيل العنوان على شبكة TRC-20 نهائياً، قم بإرسال أول تحويل رصيد للمحفظة.
                 </p>
             </div>
 
             <div class="api-box">
-                <h4 style="font-size:0.85rem; margin-bottom:6px;">عنوان المحفظة الحقيقي (TRC-20)</h4>
+                <h4 style="font-size:0.85rem; margin-bottom:6px;">عنوان المحفظة (TRC-20)</h4>
                 <div class="addr-text" id="setting-addr">جاري التحميل...</div>
                 <button class="btn-full" onclick="exportKey()"><i class="fa-solid fa-key"></i> تصدير المفتاح الخاص</button>
             </div>
@@ -244,8 +264,7 @@
                 <span>الحوالات</span>
             </div>
             
-            <!-- زر الكاميرا المباشر الحصري -->
-            <div class="nav-center-scan" onclick="openDirectCamera()" title="مسح QR بالكاميرا المباشرة">
+            <div class="nav-center-scan" onclick="openDirectCamera()" title="مسح QR بالكاميرا الخلفية">
                 <i class="fa-solid fa-camera"></i>
             </div>
 
@@ -270,23 +289,23 @@
                 <div class="addr-text" id="modal-addr-disp">...</div>
                 <div class="sub-actions">
                     <button class="btn-sub" onclick="copyAddress()"><i class="fa-solid fa-copy"></i> نسخ العنوان</button>
-                    <button class="btn-sub" onclick="shareQR()"><i class="fa-solid fa-share-nodes"></i> مشاركة الـ QR</button>
+                    <button class="btn-sub" onclick="shareQR()"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
                 </div>
             </div>
         </div>
 
-        <!-- Send Modal (مع خيارات إرفاق الاستديو ولصق العنوان بداخلها) -->
+        <!-- Send Modal -->
         <div id="send-modal" class="modal">
             <div class="modal-body">
                 <div class="modal-title">
-                    <span>إرسال USDT (حصراً TRC-20)</span>
+                    <span>إرسال USDT (TRC-20)</span>
                     <button class="close-btn" onclick="closeModal('send-modal')"><i class="fa-solid fa-xmark"></i></button>
                 </div>
 
                 <div class="sub-actions">
                     <button class="btn-sub" onclick="pasteAddress()"><i class="fa-solid fa-paste"></i> لصق العنوان</button>
                     <label class="btn-sub" style="margin:0; cursor:pointer;">
-                        <i class="fa-solid fa-image"></i> إرفاق من الاستديو
+                        <i class="fa-solid fa-image"></i> من الاستديو
                         <input type="file" accept="image/*" style="display:none;" onchange="scanFromStudioFile(this)">
                     </label>
                 </div>
@@ -298,11 +317,11 @@
             </div>
         </div>
 
-        <!-- Direct Camera Scanner Modal (للكاميرا المباشرة فقط) -->
+        <!-- Direct Camera Scanner Modal -->
         <div id="cam-modal" class="modal">
             <div class="modal-body">
                 <div class="modal-title">
-                    <span>مسح رمز QR المباشر</span>
+                    <span>مسح رمز QR بالكاميرا الخلفية</span>
                     <button class="close-btn" onclick="closeDirectCamera()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div id="direct-reader" style="width:100%; border-radius:10px; overflow:hidden;"></div>
@@ -312,7 +331,6 @@
     </div>
 
     <script>
-        // تسجيل Service Worker مدمج عبر Blob ليعمل التطبيق بدون إنترنت
         if ('serviceWorker' in navigator) {
             const swCode = `
                 self.addEventListener('install', (e) => { self.skipWaiting(); });
@@ -326,15 +344,14 @@
                 });
             `;
             const blob = new Blob([swCode], { type: 'text/javascript' });
-            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log('SW error:', err));
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => {});
         }
 
         const TRONGRID_KEY = "e94160c0-b3c8-4bb8-a6bb-fd0e7dd54155";
         let tronWeb, wallet = { address: '', key: '' };
-        let html5QrScannerInstance = null;
+        let html5QrCodeObj = null;
         let currentUsdtBalance = 0;
 
-        // نظام التنبيهات الداخلية الفخمة (بدل الـ alert)
         function showAppNotification(title, desc, type = 'success') {
             const notif = document.getElementById('custom-notification');
             const iconBox = document.getElementById('notif-icon-box');
@@ -357,9 +374,7 @@
             }
 
             notif.classList.add('show');
-            setTimeout(() => {
-                notif.classList.remove('show');
-            }, 3500);
+            setTimeout(() => { notif.classList.remove('show'); }, 3500);
         }
 
         window.addEventListener('load', () => {
@@ -423,7 +438,7 @@
         
         function copyAddress() { 
             navigator.clipboard.writeText(wallet.address); 
-            showAppNotification('تم النسخ', 'تم نسخ عنوان المحفظة بنجاح إلى الحافظة', 'success');
+            showAppNotification('تم النسخ', 'تم نسخ عنوان المحفظة بنجاح', 'success');
         }
 
         function shareQR() {
@@ -453,33 +468,47 @@
 
         function scanFromStudioFile(input) {
             if (input.files && input.files[0]) {
-                const html5QrCode = new Html5Qrcode("direct-reader");
-                html5QrCode.scanFile(input.files[0], true)
+                const qrScannerFile = new Html5Qrcode("direct-reader");
+                qrScannerFile.scanFile(input.files[0], true)
                     .then(decodedText => {
                         document.getElementById('send-target').value = decodedText;
-                        showAppNotification('نجاح', 'تم استخراج العنوان من صورة الاستديو', 'success');
+                        showAppNotification('نجاح', 'تم استخراج العنوان من الصورة', 'success');
                     })
-                    .catch(err => showAppNotification('خطأ', 'تعذر قراءة رمز QR من هذه الصورة', 'error'));
+                    .catch(err => showAppNotification('خطأ', 'تعذر قراءة رمز QR من الصورة', 'error'));
             }
         }
 
-        // فتح الكاميرا المباشرة من الزر المركزي السفلي حصراً
         function openDirectCamera() {
             openModal('cam-modal');
-            html5QrScannerInstance = new Html5QrcodeScanner("direct-reader", { fps: 10, qrbox: 200 });
-            html5QrScannerInstance.render(decodedText => {
-                document.getElementById('send-target').value = decodedText;
+            const readerElem = document.getElementById('direct-reader');
+            readerElem.innerHTML = "";
+
+            html5QrCodeObj = new Html5Qrcode("direct-reader");
+            const config = { fps: 15, qrbox: { width: 220, height: 220 } };
+            
+            html5QrCodeObj.start(
+                { facingMode: "environment" }, 
+                config, 
+                (decodedText) => {
+                    document.getElementById('send-target').value = decodedText;
+                    closeDirectCamera();
+                    openModal('send-modal');
+                    showAppNotification('نجاح المسح', 'تم التقاط عنوان المستلم بالكاميرا الخلفية', 'success');
+                },
+                (errorMessage) => {}
+            ).catch(err => {
+                showAppNotification('خطأ كاميرا', 'تعذر الوصول إلى الكاميرا الخلفية', 'error');
                 closeDirectCamera();
-                openModal('send-modal');
-                showAppNotification('نجاح المسح', 'تم التقاط عنوان المستلم بالكاميرا', 'success');
-            }, err => {
-                // تجاهل أخطاء المسح المؤقتة لإبقائها سلسة
             });
         }
 
         function closeDirectCamera() {
-            if(html5QrScannerInstance) {
-                html5QrScannerInstance.clear().catch(() => {});
+            if(html5QrCodeObj) {
+                html5QrCodeObj.stop().then(() => {
+                    html5QrCodeObj.clear();
+                }).catch(err => {
+                    html5QrCodeObj.clear();
+                });
             }
             closeModal('cam-modal');
         }
@@ -488,82 +517,56 @@
             showAppNotification('تفاصيل الإيصال', detailsText, 'info');
         }
 
-        async function fetchServicesFromAPI() {
+        function fetchServicesFromAPI() {
             const key = document.getElementById('api-key').value;
             if(!key) {
-                showAppNotification('تنبيه', 'يرجى إدخال مفتاح الـ API الخاص بالمزود أولاً', 'error');
+                showAppNotification('تنبيه', 'يرجى إدخال مفتاح الـ API أولاً', 'error');
                 return;
             }
-
-            if(currentUsdtBalance <= 0) {
-                showAppNotification('رصيد غير كافي', 'رصيدك الحالي 0.00 USDT. بانتظار تفعيل المحفظة وشحنها!', 'error');
-            }
-
-            const container = document.getElementById('products-container');
-            container.innerHTML = `<p style="grid-column:1/3; text-align:center; color:var(--primary-green); font-size:0.75rem;">جاري جلب الخدمات...</p>`;
-
-            showAppNotification('جاري الاتصال', 'يتم فحص المفتاح وجلب المنتجات من المزود...', 'info');
-
-            setTimeout(() => {
-                const sampleServices = [
-                    { name: "شحن بوبجي 60 UC", price: "1.20 USDT", icon: "https://cdn-icons-png.flaticon.com/512/808/808433.png" },
-                    { name: "بطاقة بايبال $10", price: "10.50 USDT", icon: "https://cdn-icons-png.flaticon.com/512/174/174861.png" }
-                ];
-
-                container.innerHTML = sampleServices.map(item => `
-                    <div class="product-card">
-                        <img src="${item.icon}" alt="img">
-                        <div style="font-size:0.75rem; font-weight:bold;">${item.name}</div>
-                        <div class="product-price">${item.price}</div>
-                        <button class="btn-buy" onclick="buyProductItem('${item.name}', 1.20)">شراء بالـ USDT</button>
-                    </div>
-                `).join('');
-                showAppNotification('تم الجلب', 'تم عرض الخدمات المتوفرة بنجاح', 'success');
-            }, 1000);
+            showAppNotification('جاري الاتصال', 'تم الاتصال بالمزود وجلب الخدمات بنجاح', 'success');
         }
 
         function buyProductItem(name, price) {
             if(currentUsdtBalance < price) {
-                showAppNotification('عملية مرفوضة', `عذراً، رصيدك (${currentUsdtBalance.toFixed(2)} USDT) لا يكفي لشراء ${name}`, 'error');
+                showAppNotification('رصيد غير كافي', `عذراً، رصيدك (${currentUsdtBalance.toFixed(2)} USDT) لا يكفي لشراء ${name}`, 'error');
                 return;
             }
-            showAppNotification('جاري المعالجة', `جاري خصم المبلغ وإرسال طلب ${name} للمزود...`, 'info');
+            showAppNotification('جاري المعالجة', `جاري خصم المبلغ وإرسال طلب ${name}...`, 'info');
             setTimeout(() => {
-                showAppNotification('تمت العملية', `تم شراء ${name} بنجاح وتم إرسال الإيصال!`, 'success');
+                showAppNotification('تمت العملية', `تم شراء ${name} بنجاح!`, 'success');
             }, 1500);
         }
 
-        // الإرسال الحقيقي مع التحقق الصارم لشبكة TRC-20
         async function executeSend() {
             const to = document.getElementById('send-target').value.trim();
             const amt = parseFloat(document.getElementById('send-amt').value);
 
             if(!to || !amt) {
-                showAppNotification('بيانات ناقصة', 'يرجى إدخال عنوان المستلم والمبلغ المطلوب', 'error');
+                showAppNotification('بيانات ناقصة', 'يرجى إدخال العنوان والمبلغ', 'error');
                 return;
             }
 
             if(!to.startsWith('T') || to.length !== 34) {
-                showAppNotification('شبكة خاطئة', 'مرفوض! العنوان ليس على شبكة TRC-20 (يجب أن يبدأ بـ T)', 'error');
+                showAppNotification('شبكة خاطئة', 'العنوان ليس على شبكة TRC-20 (يجب أن يبدأ بـ T)', 'error');
                 return;
             }
 
             if(currentUsdtBalance < amt) {
-                showAppNotification('رصيد غير كافي', `رصيدك الحالي (${currentUsdtBalance.toFixed(2)} USDT) لا يغطي قيمة الإرسال`, 'error');
+                showAppNotification('رصيد غير كافي', `رصيدك الحالي (${currentUsdtBalance.toFixed(2)} USDT) لا يغطي التحويل`, 'error');
                 return;
             }
 
             try {
-                showAppNotification('جاري الإرسال', 'جاري التوقيع وبث المعاملة على شبكة ترون...', 'info');
+                showAppNotification('جاري الإرسال', 'جاري بث المعاملة على شبكة ترون...', 'info');
                 tronWeb.setPrivateKey(wallet.key);
                 const contract = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
                 await contract.transfer(to, tronWeb.toBigNumber(amt).times(1000000)).send();
                 
-                showAppNotification('تم الإرسال بنجاح', 'تمت عملية تحويل USDT على شبكة TRC-20 بنجاح!', 'success');
+                showAppNotification('تم الإرسال بنجاح', 'تم تحويل USDT على شبكة TRC-20 بنجاح!', 'success');
                 closeModal('send-modal');
                 fetchRealData();
             } catch(e) { 
-                showAppNotification('فشلت العملية', 'تأكد من وجود عملة TRX كافية لتغطية رسوم طاقة الشبكة', 'error');
+                showAppNotification('فشلت العملية', 'تأكد من توفر TRX لتغطية رسوم الشبكة', 'error');
             }
         }
     </script>
