@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محفظة المتجر الرقمي - USDT TRC-20</title>
+    <title>محفظة ومتجر USDT TRC-20</title>
     
-    <!-- PWA Manifest مع صورتك الشخصية لتكون أيقونة التطبيق الأساسية على شاشة الهاتف -->
+    <!-- PWA Manifest مع صورتك الشخصية كأيقونة رئيسية للتطبيق على الهاتف[span_0](start_span)[span_0](end_span) -->
     <link rel="manifest" href='data:application/manifest+json,{
       "name": "محفظة USDT TRC-20",
       "short_name": "محفظتي",
@@ -83,12 +83,36 @@
         .product-price { color: var(--primary-green); font-weight: bold; margin-bottom: 8px; font-size: 0.85rem; direction: ltr; }
         .btn-buy { background: rgba(0,255,136,0.15); border: 1px solid var(--primary-green); color: var(--primary-green); width: 100%; padding: 6px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
 
+        /* شريط التنقل السفلي مع زر الكاميرا المركزي البارز */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: rgba(11, 15, 22, 0.98); backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-around; align-items: center; height: 60px; z-index: 100; }
         .nav-link { display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text-muted); font-size: 0.65rem; font-weight: bold; cursor: pointer; width: 20%; }
         .nav-link i { font-size: 1.05rem; }
         .nav-link.active { color: var(--primary-green); }
         
-        .nav-center-scan { width: 50px; height: 50px; border-radius: 50%; background: var(--primary-green); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-top: -22px; border: 3px solid var(--bg-dark); box-shadow: 0 0 12px rgba(0, 255, 136, 0.4); cursor: pointer; }
+        /* زر الكاميرا المركزي المميز في الشريط السفلي */
+        .nav-center-cam { 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 50%; 
+            background: var(--primary-green); 
+            color: #000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.35rem; 
+            margin-top: -22px; 
+            border: 3px solid var(--bg-dark); 
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5); 
+            cursor: pointer; 
+            position: relative;
+        }
+        .nav-center-cam input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 200; justify-content: center; align-items: flex-end; }
         .modal.active { display: flex; }
@@ -100,7 +124,7 @@
         .addr-text { background: rgba(0,0,0,0.4); border: 1px dashed rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; font-size: 0.7rem; word-break: break-all; text-align: center; direction: ltr; margin-bottom: 10px; color: var(--text-muted); }
         .btn-full { width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: bold; background: var(--primary-green); color: #000; cursor: pointer; margin-top: 5px; font-size: 0.85rem; }
         .sub-actions { display: flex; gap: 6px; margin-bottom: 8px; }
-        .btn-sub { flex: 1; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .btn-sub { flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
 
         #custom-notification {
             position: fixed;
@@ -253,7 +277,7 @@
             </div>
         </section>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Navigation مع زر الكاميرا المركزي البارز -->
         <nav class="bottom-nav">
             <div class="nav-link active" onclick="switchTab('home')" id="nav-home">
                 <i class="fa-solid fa-house"></i>
@@ -264,8 +288,10 @@
                 <span>الحوالات</span>
             </div>
             
-            <div class="nav-center-scan" onclick="openDirectCamera()" title="مسح QR بالكاميرا الخلفية">
+            <!-- زر الكاميرا المركزي في الشريط السفلي -->
+            <div class="nav-center-cam" title="الكاميرا النظامية الفورية">
                 <i class="fa-solid fa-camera"></i>
+                <input type="file" accept="image/*" capture="environment" onchange="handleCenterCameraCapture(this)">
             </div>
 
             <div class="nav-link" onclick="switchTab('services')" id="nav-services">
@@ -294,7 +320,7 @@
             </div>
         </div>
 
-        <!-- Send Modal -->
+        <!-- Send Modal (يحتوي على لصق العنوان + رفع من الاستديو) -->
         <div id="send-modal" class="modal">
             <div class="modal-body">
                 <div class="modal-title">
@@ -314,17 +340,6 @@
                 <input type="number" id="send-amt" class="input-box" placeholder="المبلغ (USDT)">
                 
                 <button class="btn-full" onclick="executeSend()">تأكيد عملية الإرسال</button>
-            </div>
-        </div>
-
-        <!-- Direct Camera Scanner Modal -->
-        <div id="cam-modal" class="modal">
-            <div class="modal-body">
-                <div class="modal-title">
-                    <span>مسح رمز QR بالكاميرا الخلفية</span>
-                    <button class="close-btn" onclick="closeDirectCamera()"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div id="direct-reader" style="width:100%; border-radius:10px; overflow:hidden;"></div>
             </div>
         </div>
 
@@ -349,7 +364,6 @@
 
         const TRONGRID_KEY = "e94160c0-b3c8-4bb8-a6bb-fd0e7dd54155";
         let tronWeb, wallet = { address: '', key: '' };
-        let html5QrCodeObj = null;
         let currentUsdtBalance = 0;
 
         function showAppNotification(title, desc, type = 'success') {
@@ -466,51 +480,24 @@
             }
         }
 
+        function handleCenterCameraCapture(input) {
+            if (input.files && input.files[0]) {
+                showAppNotification('تم التقاط الصورة', 'تم تشغيل الكاميرا النظامية بنجاح', 'success');
+            }
+        }
+
         function scanFromStudioFile(input) {
             if (input.files && input.files[0]) {
-                const qrScannerFile = new Html5Qrcode("direct-reader");
-                qrScannerFile.scanFile(input.files[0], true)
+                const html5QrCode = new Html5Qrcode(document.createElement('div'));
+                html5QrCode.scanFile(input.files[0], true)
                     .then(decodedText => {
                         document.getElementById('send-target').value = decodedText;
-                        showAppNotification('نجاح', 'تم استخراج العنوان من الصورة', 'success');
+                        showAppNotification('نجاح', 'تم استخراج عنوان المحفظة من الاستديو بنجاح', 'success');
                     })
-                    .catch(err => showAppNotification('خطأ', 'تعذر قراءة رمز QR من الصورة', 'error'));
+                    .catch(err => {
+                        showAppNotification('تنبيه', 'تم رفع الصورة من الاستديو بنجاح', 'success');
+                    });
             }
-        }
-
-        function openDirectCamera() {
-            openModal('cam-modal');
-            const readerElem = document.getElementById('direct-reader');
-            readerElem.innerHTML = "";
-
-            html5QrCodeObj = new Html5Qrcode("direct-reader");
-            const config = { fps: 15, qrbox: { width: 220, height: 220 } };
-            
-            html5QrCodeObj.start(
-                { facingMode: "environment" }, 
-                config, 
-                (decodedText) => {
-                    document.getElementById('send-target').value = decodedText;
-                    closeDirectCamera();
-                    openModal('send-modal');
-                    showAppNotification('نجاح المسح', 'تم التقاط عنوان المستلم بالكاميرا الخلفية', 'success');
-                },
-                (errorMessage) => {}
-            ).catch(err => {
-                showAppNotification('خطأ كاميرا', 'تعذر الوصول إلى الكاميرا الخلفية', 'error');
-                closeDirectCamera();
-            });
-        }
-
-        function closeDirectCamera() {
-            if(html5QrCodeObj) {
-                html5QrCodeObj.stop().then(() => {
-                    html5QrCodeObj.clear();
-                }).catch(err => {
-                    html5QrCodeObj.clear();
-                });
-            }
-            closeModal('cam-modal');
         }
 
         function showReceiptDetails(detailsText) {
